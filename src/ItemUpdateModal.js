@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Modal from "@mui/material/Modal";
-import Box from "@mui/material/Box";
+
+import Modal from "./Modal";
+
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
@@ -10,21 +11,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import moment from "moment";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-
 function unixToDateTime(unixTime) {
-  console.log(unixTime);
-  console.log(moment.unix(unixTime));
   return moment(unixTime).format("lll");
 }
 
@@ -111,64 +98,65 @@ export default function ItemUpdateModal(props) {
     setItem(initItem);
   }, [initItem]);
 
-  return (
-    <Modal
-      open={show}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        {item && (
-          <>
-            <TextField
-              error={error.title}
-              id="outlined-multiline-static"
-              label="Item Text"
-              multiline
-              rows={4}
-              style={{ width: "100%" }}
-              placeholder="Add item text here..."
-              value={item.title}
-              onChange={(event) => {
-                setItem({ ...item, title: event.target.value });
-                setError({ ...error, title: false });
-              }}
-            />
-            <div>Start Time: {unixToDateTime(item.start)}</div>
-            <div>End Time: {unixToDateTime(item.end)}</div>
-          </>
-        )}
+  function renderFooter() {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: 10,
+          justifyContent: "space-between",
+        }}
+      >
+        <div>
+          {isUpdate && <DeleteAlertButton onConfirmDelete={handleDelete} />}
+        </div>
         <div
           style={{
             display: "flex",
             flexDirection: "row",
             gap: 10,
-            justifyContent: "space-between",
-            marginTop: 20,
           }}
         >
-          <div>
-            {isUpdate && <DeleteAlertButton onConfirmDelete={handleDelete} />}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 10,
-            }}
+          <Button onClick={onClose}>Close</Button>
+          <Button
+            variant="contained"
+            style={{ width: 200 }}
+            onClick={handleSubmit}
           >
-            <Button onClick={onClose}>Close</Button>
-            <Button
-              variant="contained"
-              style={{ width: 200 }}
-              onClick={handleSubmit}
-            >
-              {isUpdate ? "Update Item" : "Create Item"}
-            </Button>
-          </div>
+            {isUpdate ? "Update Item" : "Create Item"}
+          </Button>
         </div>
-      </Box>
+      </div>
+    );
+  }
+  return (
+    <Modal
+      show={show}
+      onClose={handleClose}
+      title={isUpdate ? "Update Item" : "Create New Item"}
+      renderFooter={renderFooter}
+    >
+      {item && (
+        <>
+          <TextField
+            error={error.title}
+            id="outlined-multiline-static"
+            label="Item Text"
+            multiline
+            rows={4}
+            style={{ width: "100%" }}
+            placeholder="Add item text here..."
+            value={item.title}
+            onChange={(event) => {
+              setItem({ ...item, title: event.target.value });
+              setError({ ...error, title: false });
+            }}
+          />
+          <div>Start Time: {unixToDateTime(item.start)}</div>
+          <div>End Time: {unixToDateTime(item.end)}</div>
+        </>
+      )}
     </Modal>
   );
 }

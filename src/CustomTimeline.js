@@ -136,16 +136,19 @@ export default function CustomTimeline() {
     setItems(updatedItems);
   }
 
+  const show = modalItemObject !== null;
   return (
     <>
-      <ItemUpdateModal
-        show={modalItemObject !== null}
-        onClose={() => setModalItemObject(null)}
-        initItem={modalItemObject}
-        onCreateNewItem={onCreateNewItem}
-        onUpdateItem={onUpdateItem}
-        onConfirmDelete={onConfirmDelete}
-      />
+      {show && (
+        <ItemUpdateModal
+          show={show}
+          onClose={() => setModalItemObject(null)}
+          initItem={modalItemObject}
+          onCreateNewItem={onCreateNewItem}
+          onUpdateItem={onUpdateItem}
+          onConfirmDelete={onConfirmDelete}
+        />
+      )}
       <Timeline
         groups={groups}
         items={items}
